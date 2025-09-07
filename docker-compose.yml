@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres
+    container_name: video_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: video_web
+    command: ["uv", "run", "gunicorn", "video_project.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
+    volumes:
+      - ./media:/app/media
+      - ./static:/app/static
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DJANGO_SETTINGS_MODULE: video_project.settings
+      DATABASE_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD:-video_pass}@db:5432/${DATABASE_NAME}
+
+  nginx:
+    image: nginx:alpine
+    container_name: video_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/app/static
+      - ./media:/app/media
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+

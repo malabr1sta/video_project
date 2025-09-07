@@ -1,0 +1,7 @@
+DJANGO_SECRET_KEY=django-insecure-hs-_pgb!wu)d+_%-kgle_j+*r0y%%$w!1+t%1h9qjata80obt*
+DATABASE_USER=user_video
+DATABASE_PASSWORD=9DMkLkdjfkljKLDFJ
+DATABASE_NAME=video_db
+DATABASE_PORT=5432
+DATABASE_HOST=db
+DJANGO_DEBUG=False
